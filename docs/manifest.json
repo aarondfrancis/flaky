@@ -1,0 +1,20 @@
+{
+    "basePath": "/sidecar/docs/local",
+    "assetUrl": "/sidecar/docs/local",
+    "navigation": {
+        "Overview": "/overview",
+        "Installation": "/installation",
+        "Configuration": "/configuration",
+        "Environments": "/environments",
+        "Functions": {
+            "children": {
+                "Handlers & Packages": "/functions/handlers-and-packages",
+                "Customization": "/functions/customization",
+                "Deploying": "/functions/deploying",
+                "Hooks": "/functions/hooks",
+                "Warming": "/functions/warming",
+                "Executing": "/functions/executing"
+            }
+        }
+    }
+}

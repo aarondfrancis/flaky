@@ -1,0 +1,39 @@
+{
+    "name": "hammerstone/flaky",
+    "description": "A Laravel package to elegantly handle flaky operations.",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Aaron Francis",
+            "email": "aaron@hammerstone.dev"
+        }
+    ],
+    "require": {
+        "php": "^8.0",
+        "illuminate/support": "^9.0|^10",
+        "illuminate/cache": "^9.0|^10",
+        "illuminate/console": "^9.0|^10"
+    },
+    "require-dev": {
+        "mockery/mockery": "^1.3.3",
+        "phpunit/phpunit": ">=8.5.23|^9"
+    },
+    "autoload": {
+        "psr-4": {
+            "Hammerstone\\Flaky\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Hammerstone\\Flaky\\Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Hammerstone\\Flaky\\Providers\\FlakyServiceProvider"
+            ]
+        }
+    }
+}
