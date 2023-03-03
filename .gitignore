@@ -1,12 +1,13 @@
-/vendor
-/storage/framework/testing
-.env
+.idea
 .phpunit.result.cache
-npm-debug.log
-yarn-error.log
+build
 composer.lock
-bootstrap/cache/packages.php
-bootstrap/cache/services.php
+coverage
+phpunit.xml
+phpstan.neon
+testbench.yaml
+vendor
+node_modules
 
 docs/*.blade.php
 docs/**/*.blade.php
