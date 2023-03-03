@@ -32,7 +32,7 @@ jobs:
 
             # Laravel 10 requires PHP 8.1
           - laravel: 10.*
-            php: 8.0
+            php: 8.0.2
 
     name: P${{ matrix.php }} / L${{ matrix.laravel }} / G${{ matrix.guzzle }} / ${{ matrix.dependency-version }}
 
