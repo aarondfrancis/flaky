@@ -23,7 +23,7 @@ if (Lottery::odds(1 / 5)->choose()) {
 }
 ```
 
-But you don't care if it fails, as long as it doesn't fail for more than hour. Then you could wrap that code up in Flaky
+But you don't care if it fails, as long as it doesn't fail for more than an hour. Then you could wrap that code up in Flaky
 protections.
 
 ```php
@@ -59,7 +59,7 @@ If you want to throw an exception after a certain period of time, you have sever
 - `allowFailuresForDays($days)`
 - `allowFailuresFor($seconds = 0, $minutes = 0, $hours = 0, $days = 0)`
 
-If your callback throws an exception, Flaky will check to see if it's still in the grace period. If it is, the exception
+If your callback throws an exception, Flaky will check to see if it's still within the grace period. If it is, the exception
 will be captured.
 
 If your callback succeeds, the deadline will be reset.
@@ -78,7 +78,7 @@ Flaky::make('my-flaky-code')
     })
 ```
 
-Now your function can fail 10 times in a row without alerting you, but on the 11th failure the exception will be thrown.
+Now your function can fail 10 times in a row without alerting you, but on the 11th failure the exception will be thrown. If the callback succeeds, the consecutive failure counter will be reset.
 
 ### Total Failures
 
@@ -116,8 +116,8 @@ Flaky::make('my-flaky-code')
 
 ## Reporting instead of throwing
 
-By default, Flaky will actually throw the exception if it occurs outside of the bounds you have define. You can choose
-to report that exception instead of throw it, using Laravel's `report` method.
+By default, Flaky will actually `throw` the exception if it occurs outside of the bounds you have define. You can choose
+to `report` that exception instead of throw it, using Laravel's `report` method.
 
 ```php
 Flaky::make('my-flaky-code')
@@ -189,7 +189,7 @@ Flaky::make('my-flaky-code')
 
 ## Accessing the result
 
-Flaky will return a `Result` class to your for your use.
+Flaky will return a `Result` class for your use.
 
 ```php
 $result = Flaky::make('my-flaky-code')
