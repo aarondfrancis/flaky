@@ -50,7 +50,7 @@ class Flaky
         $value = null;
 
         try {
-            $value = retry($this->retry[0], $callable, $this->retry[1], $this->retry[2]);
+            $value = retry($this->retry['times'], $callable, $this->retry['sleep'], $this->retry['when']);
         } catch (Throwable $e) {
             $failed = true;
             $exception = $e;
@@ -76,7 +76,9 @@ class Flaky
     {
         // We just store these for now and then use them in the `run` method.
         $this->retry = [
-            $times, $sleepMilliseconds, $this->normalizeRetryWhen($when)
+            'times' => $times,
+            'sleep' => $sleepMilliseconds,
+            'when' => $this->normalizeRetryWhen($when),
         ];
 
         return $this;
