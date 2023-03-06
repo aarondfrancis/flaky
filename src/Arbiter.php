@@ -7,7 +7,7 @@ namespace Hammerstone\Flaky;
 
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Cache;
-use Spatie\Macroable\Macroable;
+use Illuminate\Support\Traits\Macroable;
 
 class Arbiter
 {
