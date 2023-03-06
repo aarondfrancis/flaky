@@ -66,8 +66,7 @@ class Flaky
                 $this->protectionsBypassed() || $this->shouldAlwaysThrowException($exception)
             );
         }
-
-
+        
         return new Result($value, $exception);
     }
 
