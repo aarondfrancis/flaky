@@ -28,9 +28,8 @@ jobs:
             testbench: 8.*
 
         exclude:
-          # PHP 8.1 requires Laravel 8.65, so skip lowest
+          # Laravel 8 lowest isn't compatible with newer PHP versions
           - laravel: 8.*
-            php: 8.1
             dependency-version: prefer-lowest
 
             # PHP 8.2 requires Laravel 9.33 at least, so skip lowest
