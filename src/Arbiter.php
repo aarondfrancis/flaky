@@ -19,7 +19,7 @@ class Arbiter
 
     public $totalFailuresAllowed = INF;
 
-    public $throw = true;
+    public $handleFailuresWith;
 
     protected $key;
 
@@ -41,10 +41,19 @@ class Arbiter
         $this->totalFailures = Arr::get($stats, 'total', 0);
         $this->consecutiveFailures = Arr::get($stats, 'consecutive', 0);
         $this->deadline = Arr::get($stats, 'deadline');
+
+        $this->handleFailuresWith = function ($e) {
+            throw $e;
+        };
     }
 
-    public function handle($exception)
+    public function handle($exception, $bypassProtections = false)
     {
+        if ($bypassProtections) {
+            $this->callHandler($exception);
+            return;
+        }
+
         $this->deadline = $this->deadline ?? $this->freshDeadline();
 
         if ($exception) {
@@ -55,8 +64,13 @@ class Arbiter
         $this->updateCachedStats($exception);
 
         if ($this->outOfBounds() && !is_null($exception)) {
-            $this->throw ? throw $exception : report($exception);
+            $this->callHandler($exception);
         }
+    }
+
+    public function handleFailures($callback)
+    {
+        $this->handleFailuresWith = $callback;
     }
 
     public function outOfBounds()
@@ -77,6 +91,11 @@ class Arbiter
     public function beyondDeadline()
     {
         return now()->timestamp > $this->deadline;
+    }
+
+    protected function callHandler($exception)
+    {
+        call_user_func($this->handleFailuresWith, $exception);
     }
 
     protected function freshDeadline()
