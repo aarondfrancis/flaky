@@ -240,5 +240,4 @@ class BasicTest extends Base
 
 class SpecificException extends \Exception
 {
-
 }
