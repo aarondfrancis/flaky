@@ -11,3 +11,4 @@ node_modules
 
 docs/*.blade.php
 docs/**/*.blade.php
+.phpunit.cache/test-results

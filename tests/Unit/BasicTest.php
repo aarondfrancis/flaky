@@ -117,4 +117,72 @@ class BasicTest extends Base
         $this->assertNotNull($handler->reported);
         $this->assertInstanceOf(Exception::class, $handler->reported);
     }
+
+    /** @test */
+    public function can_disable()
+    {
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessage('Oops');
+
+        Flaky::make(__FUNCTION__)
+            ->allowFailuresForADay()
+            ->disableFlakyProtection()
+            ->run(function () {
+                throw new Exception('Oops');
+            });
+
+        config(['app.env' => 'production']);
+    }
+
+    /** @test */
+    public function can_disable_locally()
+    {
+        Flaky::make(__FUNCTION__)
+            ->allowFailuresForADay()
+            ->run(function () {
+                throw new Exception('Oops');
+            });
+
+        $this->app->detectEnvironment(function () {
+            return 'local';
+        });
+
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessage('Oops');
+
+        Flaky::make(__FUNCTION__)
+            ->allowFailuresForADay()
+            ->disableLocally()
+            ->run(function () {
+                throw new Exception('Oops');
+            });
+    }
+
+    /** @test */
+    public function can_handle_failures_ourselves()
+    {
+        $caught = null;
+        $handled = false;
+
+        Flaky::make(__FUNCTION__)
+            ->allowConsecutiveFailures(0)
+            ->handleFailures(function ($e) use (&$caught, &$handled) {
+                $caught = $e;
+                $handled = true;
+            })
+            ->run(function () {
+                throw new Exception('Oops');
+            });
+
+        $this->assertTrue($handled);
+        $this->assertInstanceOf(Exception::class, $caught);
+    }
+
+    /** @test */
+    public function can_pass_in_our_own_exception()
+    {
+        $result = Flaky::make(__FUNCTION__)->handle(new Exception('Oops'));
+
+        $this->assertInstanceOf(Result::class, $result);
+    }
 }
