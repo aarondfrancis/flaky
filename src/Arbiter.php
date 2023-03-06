@@ -47,9 +47,11 @@ class Arbiter
         };
     }
 
-    public function handle($exception, $shouldForcefullyThrowException = false)
+    public function handle($exception, $bypassProtections = false)
     {
-        if ($shouldForcefullyThrowException) {
+        $failed = !is_null($exception);
+
+        if ($failed && $bypassProtections) {
             $this->callHandler($exception);
 
             return;
@@ -64,7 +66,7 @@ class Arbiter
 
         $this->updateCachedStats($exception);
 
-        if ($this->outOfBounds() && !is_null($exception)) {
+        if ($failed && $this->outOfBounds()) {
             $this->callHandler($exception);
         }
     }

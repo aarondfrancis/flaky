@@ -19,8 +19,6 @@ class Flaky
 
     protected $retry = [];
 
-    protected $throw = true;
-
     protected $flakyProtectionDisabled = false;
 
     /**
