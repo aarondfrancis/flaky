@@ -18,8 +18,6 @@ class Flaky
 
     protected $retry = [];
 
-    protected $throw = true;
-
     protected $flakyProtectionDisabled = false;
 
     public static function make($id)
