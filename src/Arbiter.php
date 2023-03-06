@@ -47,11 +47,11 @@ class Arbiter
         };
     }
 
-    public function handle($exception, $bypassProtections = false)
+    public function handle($exception, $shouldForcefullyThrowException = false)
     {
         $failed = !is_null($exception);
 
-        if ($failed && $bypassProtections) {
+        if ($failed && $shouldForcefullyThrowException) {
             $this->callHandler($exception);
 
             return;

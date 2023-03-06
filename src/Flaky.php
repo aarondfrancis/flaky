@@ -58,12 +58,10 @@ class Flaky
             $exception = $e;
         }
 
-        if ($exception) {
-            $this->arbiter->handle(
-                $exception,
-                $this->protectionsBypassed() || $this->shouldAlwaysThrowException($exception)
-            );
-        }
+        $this->arbiter->handle(
+            $exception,
+            $this->protectionsBypassed() || $this->shouldAlwaysThrowException($exception)
+        );
 
         return new Result($value, $exception);
     }
@@ -222,9 +220,10 @@ class Flaky
         return $when;
     }
 
-    protected function shouldAlwaysThrowException(Exception $exception): bool
+    protected function shouldAlwaysThrowException(?Exception $exception): bool
     {
-        return ! is_null($this->flakyExceptions)
+        return ! is_null($exception)
+            && ! is_null($this->flakyExceptions)
             && ! in_array(get_class($exception), $this->flakyExceptions, true);
     }
 }
