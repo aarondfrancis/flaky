@@ -223,6 +223,19 @@ class BasicTest extends Base
 
         $this->assertInstanceOf(Result::class, $result);
     }
+
+    /** @test */
+    public function it_does_not_throw_for_non_exceptions_when_protections_are_bypassed()
+    {
+        $result = Flaky::make(__FUNCTION__)
+            ->allowFailuresForADay()
+            ->disableFlakyProtection()
+            ->run(function () {
+                return 1;
+            });
+
+        $this->assertEquals(1, $result);
+    }
 }
 
 class SpecificException extends \Exception

@@ -62,7 +62,7 @@ class Flaky
 
         $this->arbiter->handle(
             $exception,
-            $this->protectionsBypassed() || $this->shouldAlwaysThrowException($exception)
+            $exception && $this->protectionsBypassed() || $this->shouldAlwaysThrowException($exception)
         );
 
         return new Result($value, $exception);
