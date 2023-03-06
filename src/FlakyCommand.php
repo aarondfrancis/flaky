@@ -7,7 +7,7 @@ namespace Hammerstone\Flaky;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Arr;
-use Spatie\Macroable\Macroable;
+use Illuminate\Support\Traits\Macroable;
 
 /**
  * @mixin Flaky
