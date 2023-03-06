@@ -234,7 +234,7 @@ class BasicTest extends Base
                 return 1;
             });
 
-        $this->assertEquals(1, $result);
+        $this->assertEquals(1, $result->value);
     }
 }
 
