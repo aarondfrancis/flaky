@@ -66,7 +66,7 @@ class Flaky
                 $this->protectionsBypassed() || $this->shouldAlwaysThrowException($exception)
             );
         }
-        
+
         return new Result($value, $exception);
     }
 
@@ -187,7 +187,7 @@ class Flaky
     }
 
     /**
-     * @param  array<class-string> $exceptions
+     * @param class-string[] $exceptions
      */
     public function forExceptions(array $exceptions): self
     {
@@ -224,10 +224,9 @@ class Flaky
         return $when;
     }
 
-    protected function shouldAlwaysThrowException(?Exception $exception): bool
+    protected function shouldAlwaysThrowException(Exception $exception): bool
     {
-        return ! is_null($exception)
-            && ! is_null($this->flakyExceptions)
+        return ! is_null($this->flakyExceptions)
             && ! in_array(get_class($exception), $this->flakyExceptions, true);
     }
 }
