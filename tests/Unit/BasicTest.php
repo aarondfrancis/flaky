@@ -93,7 +93,8 @@ class BasicTest extends Base
     /** @test */
     public function reported_instead_of_thrown()
     {
-        $handler = new class {
+        $handler = new class
+        {
             public $reported;
 
             public function report(Throwable $e)
@@ -131,7 +132,6 @@ class BasicTest extends Base
             });
 
         config(['app.env' => 'production']);
-
     }
 
     /** @test */
@@ -185,5 +185,4 @@ class BasicTest extends Base
 
         $this->assertInstanceOf(Result::class, $result);
     }
-
 }

@@ -51,6 +51,7 @@ class Arbiter
     {
         if ($bypassProtections) {
             $this->callHandler($exception);
+
             return;
         }
 
