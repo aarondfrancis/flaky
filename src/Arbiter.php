@@ -47,16 +47,8 @@ class Arbiter
         };
     }
 
-    public function handle($exception, $shouldForcefullyThrowException = false)
+    public function handle($exception)
     {
-        $failed = !is_null($exception);
-
-        if ($failed && $shouldForcefullyThrowException) {
-            $this->callHandler($exception);
-
-            return;
-        }
-
         $this->deadline = $this->deadline ?? $this->freshDeadline();
 
         if ($exception) {
@@ -66,7 +58,7 @@ class Arbiter
 
         $this->updateCachedStats($exception);
 
-        if ($failed && $this->outOfBounds()) {
+        if (!is_null($exception) && $this->outOfBounds()) {
             $this->callHandler($exception);
         }
     }

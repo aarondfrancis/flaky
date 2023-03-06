@@ -21,9 +21,6 @@ class Flaky
 
     protected $flakyProtectionDisabled = false;
 
-    /**
-     * @var class-string[]|null
-     */
     protected $flakyExceptions;
 
     public static function make($id)
@@ -58,10 +55,11 @@ class Flaky
             $exception = $e;
         }
 
-        $this->arbiter->handle(
-            $exception,
-            $this->protectionsBypassed() || $this->shouldAlwaysThrowException($exception)
-        );
+        if ($this->shouldThrowImmediately($exception)) {
+            throw $exception;
+        }
+
+        $this->arbiter->handle($exception);
 
         return new Result($value, $exception);
     }
@@ -182,10 +180,7 @@ class Flaky
         return $this;
     }
 
-    /**
-     * @param class-string[] $exceptions
-     */
-    public function forExceptions(array $exceptions): self
+    public function forExceptions(array $exceptions)
     {
         $this->flakyExceptions = $exceptions;
 
@@ -220,10 +215,17 @@ class Flaky
         return $when;
     }
 
-    protected function shouldAlwaysThrowException(?Exception $exception): bool
+    protected function shouldThrowImmediately(Exception $exception = null)
     {
-        return ! is_null($exception)
-            && ! is_null($this->flakyExceptions)
-            && ! in_array(get_class($exception), $this->flakyExceptions, true);
+        if (is_null($exception)) {
+            return false;
+        }
+
+        return $this->protectionsBypassed() || !$this->exceptionIsFlaky($exception);
+    }
+
+    protected function exceptionIsFlaky(Exception $exception = null)
+    {
+        return is_null($this->flakyExceptions) || in_array(get_class($exception), $this->flakyExceptions, true);
     }
 }
