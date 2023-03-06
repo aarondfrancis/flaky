@@ -51,27 +51,39 @@ class Flaky
 
     public function run(callable $callable)
     {
-        $failed = false;
         $exception = null;
         $value = null;
 
         try {
             $value = retry($this->retry['times'], $callable, $this->retry['sleep'], $this->retry['when']);
         } catch (Throwable $e) {
-            $failed = true;
             $exception = $e;
         }
 
-        if (
-            $failed
-            && ($this->protectionsBypassed() || $this->shouldAlwaysThrowException($exception))
-        ) {
-            throw $exception;
-        }
-
-        $this->arbiter->handle($exception);
+        $this->arbiter->handle(
+            $exception,
+            $this->protectionsBypassed() || $this->shouldAlwaysThrowException($exception)
+        );
 
         return new Result($value, $exception);
+    }
+
+    public function handle(Throwable $exception = null)
+    {
+        return $this->run(function () use ($exception) {
+            if (!is_null($exception)) {
+                throw $exception;
+            }
+        });
+    }
+
+    public function disableLocally()
+    {
+        if (app()->environment('local')) {
+            $this->disableFlakyProtection();
+        }
+
+        return $this;
     }
 
     public function disableFlakyProtection($disabled = true)
@@ -93,18 +105,25 @@ class Flaky
         return $this;
     }
 
-    public function reportFailures()
+    public function handleFailures($callback)
     {
-        $this->arbiter->throw = false;
+        $this->arbiter->handleFailures($callback);
 
         return $this;
     }
 
+    public function reportFailures()
+    {
+        return $this->handleFailures(function ($e) {
+            report($e);
+        });
+    }
+
     public function throwFailures()
     {
-        $this->arbiter->throw = true;
-
-        return $this;
+        return $this->handleFailures(function ($e) {
+            throw $e;
+        });
     }
 
     public function allowFailuresFor($seconds = 0, $minutes = 0, $hours = 0, $days = 0)
@@ -203,8 +222,10 @@ class Flaky
         return $when;
     }
 
-    protected function shouldAlwaysThrowException(Exception $exception): bool
+    protected function shouldAlwaysThrowException(?Exception $exception): bool
     {
-        return ! is_null($this->flakyExceptions) && ! in_array(get_class($exception), $this->flakyExceptions, true);
+        return ! is_null($exception)
+            && ! is_null($this->flakyExceptions)
+            && ! in_array(get_class($exception), $this->flakyExceptions, true);
     }
 }
