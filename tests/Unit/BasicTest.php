@@ -119,6 +119,44 @@ class BasicTest extends Base
     }
 
     /** @test */
+    public function throws_for_unset_specific_exceptions()
+    {
+        $this->expectException(Exception::class);
+
+        Carbon::setTestNow();
+
+        // We've specified a flaky exception, but we will throw another, so it should throw.
+        $flaky = Flaky::make(__FUNCTION__)->forExceptions([SpecificException::class])->allowFailuresForSeconds(60);
+
+        $result = $flaky->run(function () {
+            throw new Exception();
+        });
+    }
+
+    /** @test */
+    public function does_not_throws_for_specific_exceptions()
+    {
+        Carbon::setTestNow();
+
+        $flaky = Flaky::make(__FUNCTION__)->forExceptions([SpecificException::class])->allowFailuresForSeconds(60);
+
+        // Should not throw, since it is the first occurrence of a defined flaky exception.
+        $result = $flaky->run(function () {
+            throw new SpecificException();
+        });
+
+        $this->assertTrue($result->failed);
+
+        Carbon::setTestNow(now()->addSeconds(61));
+
+        $this->expectException(SpecificException::class);
+
+        $flaky->run(function () {
+            throw new SpecificException();
+        });
+    }
+
+    /** @test */
     public function can_disable()
     {
         $this->expectException(Exception::class);
@@ -185,4 +223,22 @@ class BasicTest extends Base
 
         $this->assertInstanceOf(Result::class, $result);
     }
+
+    /** @test */
+    public function it_does_not_throw_for_non_exceptions_when_protections_are_bypassed()
+    {
+        $result = Flaky::make(__FUNCTION__)
+            ->allowFailuresForADay()
+            ->disableFlakyProtection()
+            ->run(function () {
+                return 1;
+            });
+
+        $this->assertEquals(1, $result->value);
+    }
+}
+
+class SpecificException extends \Exception
+{
+
 }
