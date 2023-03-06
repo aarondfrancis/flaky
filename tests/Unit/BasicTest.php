@@ -117,4 +117,47 @@ class BasicTest extends Base
         $this->assertNotNull($handler->reported);
         $this->assertInstanceOf(Exception::class, $handler->reported);
     }
+
+    /** @test */
+    public function throws_for_unset_specific_exceptions()
+    {
+        $this->expectException(Exception::class);
+
+        Carbon::setTestNow();
+
+        // We've specified a flaky exception, but we will throw another, so it should throw.
+        $flaky = Flaky::make(__FUNCTION__)->forExceptions([SpecificException::class])->allowFailuresForSeconds(60);
+
+        $result = $flaky->run(function () {
+            throw new Exception();
+        });
+    }
+
+    /** @test */
+    public function does_not_throws_for_specific_exceptions()
+    {
+        Carbon::setTestNow();
+
+        $flaky = Flaky::make(__FUNCTION__)->forExceptions([SpecificException::class])->allowFailuresForSeconds(60);
+
+        // Should not throw, since it is the first occurrence of a defined flaky exception.
+        $result = $flaky->run(function () {
+            throw new SpecificException();
+        });
+
+        $this->assertTrue($result->failed);
+
+        Carbon::setTestNow(now()->addSeconds(61));
+
+        $this->expectException(SpecificException::class);
+
+        $flaky->run(function () {
+            throw new SpecificException();
+        });
+    }
+}
+
+class SpecificException extends \Exception
+{
+
 }

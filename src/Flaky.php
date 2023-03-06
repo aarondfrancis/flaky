@@ -5,6 +5,7 @@
 
 namespace Hammerstone\Flaky;
 
+use Exception;
 use Illuminate\Support\Traits\Macroable;
 use Throwable;
 
@@ -21,6 +22,11 @@ class Flaky
     protected $throw = true;
 
     protected $flakyProtectionDisabled = false;
+
+    /**
+     * @var class-string[]|null
+     */
+    protected $flakyExceptions;
 
     public static function make($id)
     {
@@ -56,7 +62,10 @@ class Flaky
             $exception = $e;
         }
 
-        if ($this->protectionsBypassed() && $failed) {
+        if (
+            $failed
+            && ($this->protectionsBypassed() || $this->shouldAlwaysThrowException($exception))
+        ) {
             throw $exception;
         }
 
@@ -156,6 +165,16 @@ class Flaky
         return $this;
     }
 
+    /**
+     * @param  array<class-string> $exceptions
+     */
+    public function forExceptions(array $exceptions): self
+    {
+        $this->flakyExceptions = $exceptions;
+
+        return $this;
+    }
+
     protected function protectionsBypassed()
     {
         return static::$disabledGlobally || $this->flakyProtectionDisabled;
@@ -182,5 +201,10 @@ class Flaky
         }
 
         return $when;
+    }
+
+    protected function shouldAlwaysThrowException(Exception $exception): bool
+    {
+        return ! is_null($this->flakyExceptions) && ! in_array(get_class($exception), $this->flakyExceptions, true);
     }
 }
