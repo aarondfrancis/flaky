@@ -5,9 +5,6 @@
 
 namespace Hammerstone\Flaky\Tests\Unit;
 
-use Illuminate\Console\Events\ScheduledTaskStarting;
-use Illuminate\Console\Scheduling\CacheEventMutex;
-use Illuminate\Console\Scheduling\Event as SchedulingEvent;
 use Illuminate\Support\Env;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Event;
