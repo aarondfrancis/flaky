@@ -5,7 +5,8 @@
 
 namespace Hammerstone\Flaky\Providers;
 
-use Illuminate\Console\Events\ScheduledTaskStarting;
+use Illuminate\Console\Events\CommandStarting;
+use Illuminate\Support\Env;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 
@@ -15,11 +16,12 @@ class FlakyServiceProvider extends ServiceProvider
     {
         // $this->mergeConfigFrom(__DIR__ . '/../../config/flaky.php', 'flaky');
 
-        Event::listen(function (ScheduledTaskStarting $event) {
-            if ($event->task->command) {
-                // Laravel provides no way to tell if a command is running via the
-                // scheduler, so we just add our own environment variable here.
-                $event->task->command = 'IS_SCHEDULED=1 ' . $event->task->command;
+        Event::listen(function (CommandStarting $event) {
+            // When the schedule is starting we add an ENV variable. That
+            // variable will get propagated down to all spawned commands
+            // via the Symfony Process `getDefaultEnv` method.
+            if ($event->command === 'schedule:run') {
+                Env::getRepository()->set('IS_SCHEDULED', 1);
             }
         });
     }
