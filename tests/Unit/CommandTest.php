@@ -5,9 +5,7 @@
 
 namespace Hammerstone\Flaky\Tests\Unit;
 
-use Illuminate\Console\Events\ScheduledTaskStarting;
-use Illuminate\Console\Scheduling\CacheEventMutex;
-use Illuminate\Console\Scheduling\Event as SchedulingEvent;
+use Illuminate\Support\Env;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Event;
 
@@ -44,23 +42,27 @@ class CommandTest extends Base
         $this->assertEquals('true', $disabled);
 
         // This gets added by our event listener, which is tested elsewhere.
-        $_ENV['IS_SCHEDULED'] = '1';
+        Env::getRepository()->set('IS_SCHEDULED', 1);
 
         Artisan::call('flaky:scheduled');
         $disabled = trim(Artisan::output());
 
         $this->assertEquals('false', $disabled);
 
-        unset($_ENV['IS_SCHEDULED']);
+        Env::getRepository()->set('IS_SCHEDULED', 0);
     }
 
     /** @test */
-    public function scheduled_command_gets_modified()
+    public function env_var_gets_set()
     {
-        Event::dispatch(new ScheduledTaskStarting(
-            $task = new SchedulingEvent(app(CacheEventMutex::class), 'command')
-        ));
+        $repo = Env::getRepository();
 
-        $this->assertEquals('IS_SCHEDULED=1 command', $task->command);
+        $repo->set('IS_SCHEDULED', 0);
+
+        $this->assertEquals('0', $repo->get('IS_SCHEDULED'));
+
+        Artisan::call('schedule:run');
+
+        $this->assertEquals('1', $repo->get('IS_SCHEDULED'));
     }
 }

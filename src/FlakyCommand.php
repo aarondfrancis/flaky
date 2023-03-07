@@ -7,6 +7,7 @@ namespace Hammerstone\Flaky;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Env;
 use Illuminate\Support\Traits\Macroable;
 
 /**
@@ -57,7 +58,7 @@ class FlakyCommand
     protected function isScheduledCommand()
     {
         // See the FlakyServiceProvider to see where this is coming from.
-        return Arr::get($_ENV, 'IS_SCHEDULED', 0) === '1';
+        return Env::get('IS_SCHEDULED') === '1';
     }
 
     protected function hashInput()
