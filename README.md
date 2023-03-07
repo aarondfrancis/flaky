@@ -66,7 +66,7 @@ If your callback succeeds, the deadline will be reset.
 
 ### Consecutive Failures
 
-If you'd prefer to take a numeric approach instead of a time-based approach, you can use the `consecutiveFailures`
+If you'd prefer to take a numeric approach instead of a time-based approach, you can use the `allowConsecutiveFailures`
 method.
 
 ```php
@@ -83,12 +83,12 @@ Now your function can fail 10 times in a row without alerting you, but on the 11
 ### Total Failures
 
 If you want to throw an exception after a total number of failures, regardless of successes, you can use
-the `totalFailures` method.
+the `allowTotalFailures` method.
 
 ```php
 Flaky::make('my-flaky-code')
     // It can fail ten times total. 
-    ->totalFailures(10)
+    ->allowTotalFailures(10)
     ->run(function() {
         //
     })
@@ -106,9 +106,9 @@ Flaky::make('my-flaky-code')
     // Alert after an hour. 
     ->allowFailuresForAnHour()
     // Alert after the third consecutive failure.
-    ->consecutiveFailures(3)
+    ->allowConsecutiveFailures(3)
     // Alert after the tenth failure. 
-    ->totalFailures(10)
+    ->allowTotalFailures(10)
     ->run(function() {
         //
     })
