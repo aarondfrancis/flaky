@@ -215,7 +215,7 @@ class Flaky
         return $when;
     }
 
-    protected function shouldThrowImmediately(Exception $exception = null)
+    protected function shouldThrowImmediately(Throwable $exception = null)
     {
         if (is_null($exception)) {
             return false;
@@ -224,7 +224,7 @@ class Flaky
         return $this->protectionsBypassed() || !$this->exceptionIsFlaky($exception);
     }
 
-    protected function exceptionIsFlaky(Exception $exception = null)
+    protected function exceptionIsFlaky(Throwable $exception = null)
     {
         return is_null($this->flakyExceptions) || in_array(get_class($exception), $this->flakyExceptions, true);
     }
