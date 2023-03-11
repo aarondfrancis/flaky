@@ -93,7 +93,8 @@ class BasicTest extends Base
     /** @test */
     public function reported_instead_of_thrown()
     {
-        $handler = new class {
+        $handler = new class
+        {
             public $reported;
 
             public function report(Throwable $e)
@@ -242,12 +243,11 @@ class BasicTest extends Base
         $result = Flaky::make(__FUNCTION__)
             ->allowFailuresFor(10)
             ->run(function () {
-                strlen("test", "extra");
+                strlen('test', 'extra');
             });
 
         $this->assertEquals(true, $result->failed);
     }
-
 }
 
 class SpecificException extends \Exception
