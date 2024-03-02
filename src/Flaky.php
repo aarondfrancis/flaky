@@ -64,7 +64,7 @@ class Flaky
         return new Result($value, $exception);
     }
 
-    public function handle(Throwable $exception = null)
+    public function handle(?Throwable $exception = null)
     {
         return $this->run(function () use ($exception) {
             if (!is_null($exception)) {
@@ -215,7 +215,7 @@ class Flaky
         return $when;
     }
 
-    protected function shouldThrowImmediately(Throwable $exception = null)
+    protected function shouldThrowImmediately(?Throwable $exception = null)
     {
         if (is_null($exception)) {
             return false;
@@ -224,7 +224,7 @@ class Flaky
         return $this->protectionsBypassed() || !$this->exceptionIsFlaky($exception);
     }
 
-    protected function exceptionIsFlaky(Throwable $exception = null)
+    protected function exceptionIsFlaky(?Throwable $exception = null)
     {
         return is_null($this->flakyExceptions) || in_array(get_class($exception), $this->flakyExceptions, true);
     }
