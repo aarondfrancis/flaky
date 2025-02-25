@@ -4,9 +4,9 @@
  * @author Aaron Francis <aarondfrancis@gmail.com|https://twitter.com/aarondfrancis>
  */
 
-namespace Hammerstone\Flaky\Tests\Support\Commands;
+namespace AaronFrancis\Flaky\Tests\Support\Commands;
 
-use Hammerstone\Flaky\FlakyCommand;
+use AaronFrancis\Flaky\FlakyCommand;
 use Illuminate\Console\Command;
 
 class OnlyScheduledCommand extends Command

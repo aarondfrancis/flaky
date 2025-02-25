@@ -4,9 +4,9 @@
  * @author Aaron Francis <aaron@hammerstone.dev>
  */
 
-namespace Hammerstone\Flaky\Tests\Unit;
+namespace AaronFrancis\Flaky\Tests\Unit;
 
-use Hammerstone\Flaky\Flaky;
+use AaronFrancis\Flaky\Flaky;
 
 class SecondsTest extends Base
 {

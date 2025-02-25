@@ -4,7 +4,7 @@
  * @author Aaron Francis <aaron@hammerstone.dev>
  */
 
-namespace Hammerstone\Flaky\Providers;
+namespace AaronFrancis\Flaky\Providers;
 
 use Illuminate\Console\Events\CommandStarting;
 use Illuminate\Support\Env;

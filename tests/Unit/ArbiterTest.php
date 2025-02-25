@@ -4,10 +4,10 @@
  * @author Aaron Francis <aaron@hammerstone.dev>
  */
 
-namespace Hammerstone\Flaky\Tests\Unit;
+namespace AaronFrancis\Flaky\Tests\Unit;
 
 use Exception;
-use Hammerstone\Flaky\Arbiter;
+use AaronFrancis\Flaky\Arbiter;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Cache;
 use Throwable;

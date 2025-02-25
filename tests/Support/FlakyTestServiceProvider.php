@@ -4,13 +4,13 @@
  * @author Aaron Francis <aaron@hammerstone.dev>
  */
 
-namespace Hammerstone\Flaky\Tests\Support;
+namespace AaronFrancis\Flaky\Tests\Support;
 
-use Hammerstone\Flaky\Arbiter;
-use Hammerstone\Flaky\Flaky;
-use Hammerstone\Flaky\Tests\Support\Commands\FlakyTestCommand;
-use Hammerstone\Flaky\Tests\Support\Commands\FlakyVaryOnInputCommand;
-use Hammerstone\Flaky\Tests\Support\Commands\OnlyScheduledCommand;
+use AaronFrancis\Flaky\Arbiter;
+use AaronFrancis\Flaky\Flaky;
+use AaronFrancis\Flaky\Tests\Support\Commands\FlakyTestCommand;
+use AaronFrancis\Flaky\Tests\Support\Commands\FlakyVaryOnInputCommand;
+use AaronFrancis\Flaky\Tests\Support\Commands\OnlyScheduledCommand;
 use Illuminate\Support\ServiceProvider;
 
 class FlakyTestServiceProvider extends ServiceProvider

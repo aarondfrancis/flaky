@@ -4,11 +4,11 @@
  * @author Aaron Francis <aaron@hammerstone.dev>
  */
 
-namespace Hammerstone\Flaky\Tests\Unit;
+namespace AaronFrancis\Flaky\Tests\Unit;
 
 use Exception;
-use Hammerstone\Flaky\Flaky;
-use Hammerstone\Flaky\Tests\Support\TimeoutException;
+use AaronFrancis\Flaky\Flaky;
+use AaronFrancis\Flaky\Tests\Support\TimeoutException;
 
 class RetryTest extends Base
 {

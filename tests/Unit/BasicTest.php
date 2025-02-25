@@ -4,12 +4,12 @@
  * @author Aaron Francis <aaron@hammerstone.dev>
  */
 
-namespace Hammerstone\Flaky\Tests\Unit;
+namespace AaronFrancis\Flaky\Tests\Unit;
 
 use Carbon\Carbon;
 use Exception;
-use Hammerstone\Flaky\Flaky;
-use Hammerstone\Flaky\Result;
+use AaronFrancis\Flaky\Flaky;
+use AaronFrancis\Flaky\Result;
 use Illuminate\Contracts\Debug\ExceptionHandler;
 use Throwable;
 

@@ -4,10 +4,10 @@
  * @author Aaron Francis <aaron@hammerstone.dev|https://twitter.com/aarondfrancis>
  */
 
-namespace Hammerstone\Flaky\Tests\Unit;
+namespace AaronFrancis\Flaky\Tests\Unit;
 
-use Hammerstone\Flaky\Providers\FlakyServiceProvider;
-use Hammerstone\Flaky\Tests\Support\FlakyTestServiceProvider;
+use AaronFrancis\Flaky\Providers\FlakyServiceProvider;
+use AaronFrancis\Flaky\Tests\Support\FlakyTestServiceProvider;
 use Orchestra\Testbench\TestCase;
 
 abstract class Base extends TestCase

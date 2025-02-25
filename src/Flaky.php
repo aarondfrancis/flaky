@@ -4,7 +4,7 @@
  * @author Aaron Francis <aaron@hammerstone.dev|https://twitter.com/aarondfrancis>
  */
 
-namespace Hammerstone\Flaky;
+namespace AaronFrancis\Flaky;
 
 use Exception;
 use Illuminate\Support\Traits\Macroable;

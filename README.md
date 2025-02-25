@@ -3,8 +3,6 @@
 Flaky for Laravel is a package that helps you handle operations that may have intermittent failures due to unreliable
 third-parties.
 
-This is very much in beta! Please open issues / PRs for any problems.
-
 ## Installation
 
 You can install the package via Composer
