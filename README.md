@@ -1,4 +1,4 @@
-## Flaky for Laravel
+# Flaky for Laravel
 
 Flaky for Laravel is a package that helps you handle operations that may have intermittent failures due to unreliable
 third-parties.
@@ -8,7 +8,7 @@ third-parties.
 You can install the package via Composer
 
 ```console
-composer require hammerstone/flaky
+composer require aaronfrancis/flaky
 ```
 
 ## Usage
@@ -270,3 +270,27 @@ class FlakyTestCommand extends Command
     }
 }
 ```
+
+## License
+
+The MIT License (MIT).
+
+## Support
+
+This is free! If you want to support me:
+
+- Sponsor my open source work: [aaronfrancis.com/backstage](https://aaronfrancis.com/backstage)
+- Check out my courses:
+    - [Mastering Postgres](https://masteringpostgres.com)
+    - [High Performance SQLite](https://highperformancesqlite.com)
+    - [Screencasting](https://screencasting.com)
+- Help spread the word about things I make
+
+## Credits
+
+Flaky was developed by Aaron Francis. If you like it, please let me know!
+
+- Twitter: https://twitter.com/aarondfrancis
+- Website: https://aaronfrancis.com
+- YouTube: https://youtube.com/@aarondfrancis
+- GitHub: https://github.com/aarondfrancis/solo

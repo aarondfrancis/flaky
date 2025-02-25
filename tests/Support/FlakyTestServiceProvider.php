@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @author Aaron Francis <aaron@hammerstone.dev>
+ * @author Aaron Francis <aaron@tryhardstudios.com>
  */
 
 namespace AaronFrancis\Flaky\Tests\Support;
