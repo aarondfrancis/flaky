@@ -11,11 +11,12 @@ use AaronFrancis\Flaky\Result;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Contracts\Debug\ExceptionHandler;
+use PHPUnit\Framework\Attributes\Test;
 use Throwable;
 
 class BasicTest extends Base
 {
-    /** @test */
+    #[Test]
     public function it_works_with_no_exceptions()
     {
         $result = Flaky::make(__FUNCTION__)->run(function () {
@@ -29,7 +30,7 @@ class BasicTest extends Base
         $this->assertNull($result->exception);
     }
 
-    /** @test */
+    #[Test]
     public function failures_past_the_deadline_throw()
     {
         Carbon::setTestNow();
@@ -51,7 +52,7 @@ class BasicTest extends Base
         });
     }
 
-    /** @test */
+    #[Test]
     public function too_many_consecutive_throw()
     {
         $flaky = Flaky::make(__FUNCTION__)->allowConsecutiveFailures(5);
@@ -71,7 +72,7 @@ class BasicTest extends Base
         });
     }
 
-    /** @test */
+    #[Test]
     public function too_many_total_throw()
     {
         $flaky = Flaky::make(__FUNCTION__)->allowTotalFailures(5);
@@ -91,7 +92,7 @@ class BasicTest extends Base
         });
     }
 
-    /** @test */
+    #[Test]
     public function reported_instead_of_thrown()
     {
         $handler = new class
@@ -119,7 +120,7 @@ class BasicTest extends Base
         $this->assertInstanceOf(Exception::class, $handler->reported);
     }
 
-    /** @test */
+    #[Test]
     public function throws_for_unset_specific_exceptions()
     {
         $this->expectException(Exception::class);
@@ -134,7 +135,7 @@ class BasicTest extends Base
         });
     }
 
-    /** @test */
+    #[Test]
     public function does_not_throws_for_specific_exceptions()
     {
         Carbon::setTestNow();
@@ -157,7 +158,7 @@ class BasicTest extends Base
         });
     }
 
-    /** @test */
+    #[Test]
     public function can_disable()
     {
         $this->expectException(Exception::class);
@@ -173,7 +174,7 @@ class BasicTest extends Base
         config(['app.env' => 'production']);
     }
 
-    /** @test */
+    #[Test]
     public function can_disable_locally()
     {
         Flaky::make(__FUNCTION__)
@@ -197,7 +198,7 @@ class BasicTest extends Base
             });
     }
 
-    /** @test */
+    #[Test]
     public function can_handle_failures_ourselves()
     {
         $caught = null;
@@ -217,7 +218,7 @@ class BasicTest extends Base
         $this->assertInstanceOf(Exception::class, $caught);
     }
 
-    /** @test */
+    #[Test]
     public function can_pass_in_our_own_exception()
     {
         $result = Flaky::make(__FUNCTION__)->handle(new Exception('Oops'));
@@ -225,7 +226,7 @@ class BasicTest extends Base
         $this->assertInstanceOf(Result::class, $result);
     }
 
-    /** @test */
+    #[Test]
     public function it_does_not_throw_for_non_exceptions_when_protections_are_bypassed()
     {
         $result = Flaky::make(__FUNCTION__)
@@ -238,7 +239,7 @@ class BasicTest extends Base
         $this->assertEquals(1, $result->value);
     }
 
-    /** @test */
+    #[Test]
     public function handles_errors_as_well_as_exceptions()
     {
         $result = Flaky::make(__FUNCTION__)

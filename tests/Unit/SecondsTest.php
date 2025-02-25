@@ -7,10 +7,11 @@
 namespace AaronFrancis\Flaky\Tests\Unit;
 
 use AaronFrancis\Flaky\Flaky;
+use PHPUnit\Framework\Attributes\Test;
 
 class SecondsTest extends Base
 {
-    /** @test */
+    #[Test]
     public function the_math_is_right()
     {
         $data = [

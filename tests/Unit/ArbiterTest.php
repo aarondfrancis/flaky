@@ -10,6 +10,7 @@ use AaronFrancis\Flaky\Arbiter;
 use Exception;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Cache;
+use PHPUnit\Framework\Attributes\Test;
 use Throwable;
 
 class ArbiterTest extends Base
@@ -31,7 +32,7 @@ class ArbiterTest extends Base
         ], 60);
     }
 
-    /** @test */
+    #[Test]
     public function it_should_throw_because_of_total()
     {
         $this->setCache(5, 0, now()->addMinute()->timestamp);
@@ -52,7 +53,7 @@ class ArbiterTest extends Base
         $this->assertNotNull($e);
     }
 
-    /** @test */
+    #[Test]
     public function it_should_throw_because_of_consecutive()
     {
         $this->setCache(0, 5, now()->addMinute()->timestamp);
@@ -73,7 +74,7 @@ class ArbiterTest extends Base
         $this->assertNotNull($e);
     }
 
-    /** @test */
+    #[Test]
     public function it_should_throw_because_of_deadline()
     {
         Carbon::setTestNow();
@@ -111,7 +112,7 @@ class ArbiterTest extends Base
         $a->handle(new Exception);
     }
 
-    /** @test */
+    #[Test]
     public function an_allowed_failure_should_increment_both_and_carry_deadline()
     {
         $deadline = now()->addMinute()->timestamp;
@@ -128,7 +129,7 @@ class ArbiterTest extends Base
         $this->assertEquals($deadline, $stats['deadline']);
     }
 
-    /** @test */
+    #[Test]
     public function a_success_should_update_cache()
     {
         $this->setCache(2, 2, now()->timestamp);

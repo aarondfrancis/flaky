@@ -9,10 +9,11 @@ namespace AaronFrancis\Flaky\Tests\Unit;
 use AaronFrancis\Flaky\Flaky;
 use AaronFrancis\Flaky\Tests\Support\TimeoutException;
 use Exception;
+use PHPUnit\Framework\Attributes\Test;
 
 class RetryTest extends Base
 {
-    /** @test */
+    #[Test]
     public function it_will_retry()
     {
         $timesRun = 0;
@@ -34,7 +35,7 @@ class RetryTest extends Base
         $this->assertEquals(1, $result->value);
     }
 
-    /** @test */
+    #[Test]
     public function it_retries_a_particular_exception_as_single()
     {
         $timesRun = 0;
@@ -62,7 +63,7 @@ class RetryTest extends Base
         $this->assertEquals(6, $timesRun);
     }
 
-    /** @test */
+    #[Test]
     public function it_retries_a_particular_exception_as_array()
     {
         $timesRun = 0;

@@ -9,10 +9,11 @@ namespace AaronFrancis\Flaky\Tests\Unit;
 use Illuminate\Support\Env;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Event;
+use PHPUnit\Framework\Attributes\Test;
 
 class CommandTest extends Base
 {
-    /** @test */
+    #[Test]
     public function varies_on_command()
     {
         Artisan::call('flaky:vary --arg=1 --flag');
@@ -34,7 +35,7 @@ class CommandTest extends Base
         $this->assertNotEquals($one, $three);
     }
 
-    /** @test */
+    #[Test]
     public function scheduled_only()
     {
         Artisan::call('flaky:scheduled');
@@ -53,7 +54,7 @@ class CommandTest extends Base
         Env::getRepository()->set('IS_SCHEDULED', 0);
     }
 
-    /** @test */
+    #[Test]
     public function env_var_gets_set()
     {
         $repo = Env::getRepository();
