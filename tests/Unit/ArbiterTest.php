@@ -6,8 +6,8 @@
 
 namespace AaronFrancis\Flaky\Tests\Unit;
 
-use Exception;
 use AaronFrancis\Flaky\Arbiter;
+use Exception;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Cache;
 use Throwable;

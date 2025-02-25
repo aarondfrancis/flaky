@@ -6,9 +6,9 @@
 
 namespace AaronFrancis\Flaky\Tests\Unit;
 
-use Exception;
 use AaronFrancis\Flaky\Flaky;
 use AaronFrancis\Flaky\Tests\Support\TimeoutException;
+use Exception;
 
 class RetryTest extends Base
 {

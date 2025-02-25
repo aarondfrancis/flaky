@@ -6,8 +6,8 @@
 
 namespace AaronFrancis\Flaky\Tests\Support\Commands;
 
-use Exception;
 use AaronFrancis\Flaky\FlakyCommand;
+use Exception;
 use Illuminate\Console\Command;
 
 class FlakyTestCommand extends Command

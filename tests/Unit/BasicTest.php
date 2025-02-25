@@ -6,10 +6,10 @@
 
 namespace AaronFrancis\Flaky\Tests\Unit;
 
-use Carbon\Carbon;
-use Exception;
 use AaronFrancis\Flaky\Flaky;
 use AaronFrancis\Flaky\Result;
+use Carbon\Carbon;
+use Exception;
 use Illuminate\Contracts\Debug\ExceptionHandler;
 use Throwable;
 
