@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @author Aaron Francis <aaron@hammerstone.dev|https://twitter.com/aarondfrancis>
  */
@@ -17,9 +18,7 @@ abstract class Base extends TestCase
      * @param  \Illuminate\Foundation\Application  $app
      * @return void
      */
-    protected function getEnvironmentSetup($app)
-    {
-    }
+    protected function getEnvironmentSetup($app) {}
 
     protected function getPackageProviders($app)
     {

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @author Aaron Francis <aaron@hammerstone.dev>
  */
@@ -129,7 +130,7 @@ class BasicTest extends Base
         $flaky = Flaky::make(__FUNCTION__)->forExceptions([SpecificException::class])->allowFailuresForSeconds(60);
 
         $result = $flaky->run(function () {
-            throw new Exception();
+            throw new Exception;
         });
     }
 
@@ -142,7 +143,7 @@ class BasicTest extends Base
 
         // Should not throw, since it is the first occurrence of a defined flaky exception.
         $result = $flaky->run(function () {
-            throw new SpecificException();
+            throw new SpecificException;
         });
 
         $this->assertTrue($result->failed);
@@ -152,7 +153,7 @@ class BasicTest extends Base
         $this->expectException(SpecificException::class);
 
         $flaky->run(function () {
-            throw new SpecificException();
+            throw new SpecificException;
         });
     }
 
@@ -250,6 +251,4 @@ class BasicTest extends Base
     }
 }
 
-class SpecificException extends \Exception
-{
-}
+class SpecificException extends \Exception {}
