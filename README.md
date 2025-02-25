@@ -3,6 +3,10 @@
 Flaky for Laravel is a package that helps you handle operations that may have intermittent failures due to unreliable
 third-parties.
 
+[![Latest Version on Packagist](https://img.shields.io/packagist/v/aaronfrancis/flaky)](https://packagist.org/packages/aaronfrancis/flaky)
+[![Total Downloads](https://img.shields.io/packagist/dt/aaronfrancis/flaky)](https://packagist.org/packages/aaronfrancis/flaky)
+[![License](https://img.shields.io/packagist/l/aaronfrancis/flaky)](https://packagist.org/packages/aaronfrancis/flaky)
+
 ## Installation
 
 You can install the package via Composer
