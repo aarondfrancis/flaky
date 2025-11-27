@@ -8,13 +8,26 @@ namespace AaronFrancis\Flaky\Tests\Unit;
 
 use Illuminate\Support\Env;
 use Illuminate\Support\Facades\Artisan;
-use Illuminate\Support\Facades\Event;
 use PHPUnit\Framework\Attributes\Test;
 
 class CommandTest extends Base
 {
     #[Test]
-    public function varies_on_command()
+    public function command_id_without_vary_on_input(): void
+    {
+        Artisan::call('flaky:novary --arg=1');
+        $one = trim(Artisan::output());
+
+        Artisan::call('flaky:novary --arg=2');
+        $two = trim(Artisan::output());
+
+        // Without varyOnInput, keys should be the same regardless of args
+        $this->assertEquals($one, $two);
+        $this->assertEquals('flaky::command-flaky:novary', $one);
+    }
+
+    #[Test]
+    public function varies_on_command(): void
     {
         Artisan::call('flaky:vary --arg=1 --flag');
         $one = Artisan::output();

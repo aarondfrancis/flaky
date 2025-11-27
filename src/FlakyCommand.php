@@ -18,11 +18,12 @@ class FlakyCommand
 {
     use Macroable;
 
-    protected $command;
+    protected Command $command;
 
-    protected $varyOnInput = false;
+    /** @var array<string>|false */
+    protected array|false $varyOnInput = false;
 
-    public static function make(Command $command)
+    public static function make(Command $command): static
     {
         return new static($command);
     }
@@ -32,14 +33,17 @@ class FlakyCommand
         $this->command = $command;
     }
 
-    public function varyOnInput($keys = [])
+    /**
+     * @param  array<string>  $keys
+     */
+    public function varyOnInput(array $keys = []): static
     {
         $this->varyOnInput = $keys;
 
         return $this;
     }
 
-    public function instance()
+    public function instance(): Flaky
     {
         return Flaky::make($this->generateCommandId())
             // Only enable protection if the command is running
@@ -47,22 +51,22 @@ class FlakyCommand
             ->disableFlakyProtection($disabled = !$this->isScheduledCommand());
     }
 
-    protected function generateCommandId()
+    protected function generateCommandId(): string
     {
         return implode('-', array_filter([
             'command',
             $this->command->getName(),
-            $this->hashInput()
+            $this->hashInput(),
         ]));
     }
 
-    protected function isScheduledCommand()
+    protected function isScheduledCommand(): bool
     {
         // See the FlakyServiceProvider to see where this is coming from.
         return Env::get('IS_SCHEDULED') === '1';
     }
 
-    protected function hashInput()
+    protected function hashInput(): string
     {
         if ($this->varyOnInput === false) {
             return '';
@@ -73,7 +77,7 @@ class FlakyCommand
             $this->command->options()
         );
 
-        if (count($this->varyOnInput)) {
+        if (count($this->varyOnInput) > 0) {
             $input = Arr::only($input, $this->varyOnInput);
         }
 
@@ -82,10 +86,7 @@ class FlakyCommand
         return md5(json_encode($input));
     }
 
-    /**
-     * @return Flaky
-     */
-    public function __call(string $name, array $arguments)
+    public function __call(string $name, array $arguments): mixed
     {
         return $this->instance()->{$name}(...$arguments);
     }
