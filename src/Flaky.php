@@ -6,7 +6,6 @@
 
 namespace AaronFrancis\Flaky;
 
-use Exception;
 use Illuminate\Support\Traits\Macroable;
 use Throwable;
 
@@ -14,38 +13,40 @@ class Flaky
 {
     use Macroable;
 
-    protected static $disabledGlobally = false;
+    protected static bool $disabledGlobally = false;
 
-    protected $arbiter;
+    protected Arbiter $arbiter;
 
-    protected $retry = [];
+    /** @var array{times: int, sleep: int, when: callable|null} */
+    protected array $retry = [];
 
-    protected $flakyProtectionDisabled = false;
+    protected bool $flakyProtectionDisabled = false;
 
-    protected $flakyExceptions;
+    /** @var array<class-string<Throwable>>|null */
+    protected ?array $flakyExceptions = null;
 
-    public static function make($id)
+    public static function make(string $id): static
     {
         return new static($id);
     }
 
-    public static function globallyDisable()
+    public static function globallyDisable(): void
     {
         static::$disabledGlobally = true;
     }
 
-    public static function globallyEnable()
+    public static function globallyEnable(): void
     {
         static::$disabledGlobally = false;
     }
 
-    public function __construct($id)
+    public function __construct(string $id)
     {
         $this->retry();
         $this->arbiter = new Arbiter($id);
     }
 
-    public function run(callable $callable)
+    public function run(callable $callable): Result
     {
         $exception = null;
         $value = null;
@@ -65,16 +66,16 @@ class Flaky
         return new Result($value, $exception);
     }
 
-    public function handle(?Throwable $exception = null)
+    public function handle(?Throwable $exception = null): Result
     {
         return $this->run(function () use ($exception) {
-            if (!is_null($exception)) {
+            if ($exception !== null) {
                 throw $exception;
             }
         });
     }
 
-    public function disableLocally()
+    public function disableLocally(): static
     {
         if (app()->environment('local')) {
             $this->disableFlakyProtection();
@@ -83,14 +84,17 @@ class Flaky
         return $this;
     }
 
-    public function disableFlakyProtection($disabled = true)
+    public function disableFlakyProtection(bool $disabled = true): static
     {
         $this->flakyProtectionDisabled = $disabled;
 
         return $this;
     }
 
-    public function retry($times = 0, $sleepMilliseconds = 0, $when = null)
+    /**
+     * @param  string|array<class-string<Throwable>>|callable|null  $when
+     */
+    public function retry(int $times = 0, int $sleepMilliseconds = 0, string|array|callable|null $when = null): static
     {
         // We just store these for now and then use them in the `run` method.
         $this->retry = [
@@ -102,98 +106,104 @@ class Flaky
         return $this;
     }
 
-    public function handleFailures($callback)
+    public function handleFailures(callable $callback): static
     {
         $this->arbiter->handleFailures($callback);
 
         return $this;
     }
 
-    public function reportFailures()
+    public function reportFailures(): static
     {
         return $this->handleFailures(function ($e) {
             report($e);
         });
     }
 
-    public function throwFailures()
+    public function throwFailures(): static
     {
         return $this->handleFailures(function ($e) {
             throw $e;
         });
     }
 
-    public function allowFailuresFor($seconds = 0, $minutes = 0, $hours = 0, $days = 0)
+    public function allowFailuresFor(int $seconds = 0, int $minutes = 0, int $hours = 0, int $days = 0): static
     {
         return $this->allowFailuresForSeconds(
             $seconds + (60 * $minutes) + (60 * 60 * $hours) + (60 * 60 * 24 * $days)
         );
     }
 
-    public function allowFailuresForSeconds($seconds)
+    public function allowFailuresForSeconds(int $seconds): static
     {
         $this->arbiter->failuresAllowedForSeconds = $seconds;
 
         return $this;
     }
 
-    public function allowFailuresForAMinute()
+    public function allowFailuresForAMinute(): static
     {
         return $this->allowFailuresForMinutes(1);
     }
 
-    public function allowFailuresForMinutes($minutes)
+    public function allowFailuresForMinutes(int $minutes): static
     {
         return $this->allowFailuresForSeconds(60 * $minutes);
     }
 
-    public function allowFailuresForAnHour()
+    public function allowFailuresForAnHour(): static
     {
         return $this->allowFailuresForHours(1);
     }
 
-    public function allowFailuresForHours($hours)
+    public function allowFailuresForHours(int $hours): static
     {
         return $this->allowFailuresForSeconds(60 * 60 * $hours);
     }
 
-    public function allowFailuresForADay()
+    public function allowFailuresForADay(): static
     {
         return $this->allowFailuresForDays(1);
     }
 
-    public function allowFailuresForDays($days)
+    public function allowFailuresForDays(int $days): static
     {
         return $this->allowFailuresForSeconds(60 * 60 * 24 * $days);
     }
 
-    public function allowConsecutiveFailures($failures)
+    public function allowConsecutiveFailures(int|float $failures): static
     {
         $this->arbiter->consecutiveFailuresAllowed = $failures;
 
         return $this;
     }
 
-    public function allowTotalFailures($failures)
+    public function allowTotalFailures(int|float $failures): static
     {
         $this->arbiter->totalFailuresAllowed = $failures;
 
         return $this;
     }
 
-    public function forExceptions(array $exceptions)
+    /**
+     * @param  array<class-string<Throwable>>  $exceptions
+     */
+    public function forExceptions(array $exceptions): static
     {
         $this->flakyExceptions = $exceptions;
 
         return $this;
     }
 
-    protected function protectionsBypassed()
+    protected function protectionsBypassed(): bool
     {
         return static::$disabledGlobally || $this->flakyProtectionDisabled;
     }
 
-    protected function normalizeRetryWhen($when = null)
+    /**
+     * @param  string|array<class-string<Throwable>>|callable|null  $when
+     */
+    protected function normalizeRetryWhen(string|array|callable|null $when = null): ?callable
     {
         // Support for a single exception
         if (is_string($when)) {
@@ -216,17 +226,17 @@ class Flaky
         return $when;
     }
 
-    protected function shouldThrowImmediately(?Throwable $exception = null)
+    protected function shouldThrowImmediately(?Throwable $exception = null): bool
     {
-        if (is_null($exception)) {
+        if ($exception === null) {
             return false;
         }
 
         return $this->protectionsBypassed() || !$this->exceptionIsFlaky($exception);
     }
 
-    protected function exceptionIsFlaky(?Throwable $exception = null)
+    protected function exceptionIsFlaky(Throwable $exception): bool
     {
-        return is_null($this->flakyExceptions) || in_array(get_class($exception), $this->flakyExceptions, true);
+        return $this->flakyExceptions === null || in_array($exception::class, $this->flakyExceptions, true);
     }
 }

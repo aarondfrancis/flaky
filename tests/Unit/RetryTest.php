@@ -14,7 +14,7 @@ use PHPUnit\Framework\Attributes\Test;
 class RetryTest extends Base
 {
     #[Test]
-    public function it_will_retry()
+    public function it_will_retry(): void
     {
         $timesRun = 0;
 
@@ -33,6 +33,36 @@ class RetryTest extends Base
         $this->assertEquals(10, $timesRun);
         $this->assertEquals(false, $result->failed);
         $this->assertEquals(1, $result->value);
+    }
+
+    #[Test]
+    public function it_retries_with_callable_when(): void
+    {
+        $timesRun = 0;
+
+        $flaky = Flaky::make(__FUNCTION__)
+            ->retry(5, 0, function ($e) {
+                return $e instanceof TimeoutException;
+            })
+            ->allowConsecutiveFailures(10);
+
+        $flaky->run(function () use (&$timesRun) {
+            $timesRun++;
+
+            throw new TimeoutException;
+        });
+
+        // Should retry based on callable returning true
+        $this->assertEquals(5, $timesRun);
+
+        $flaky->run(function () use (&$timesRun) {
+            $timesRun++;
+
+            throw new Exception;
+        });
+
+        // Callable returns false for base Exception, no retry
+        $this->assertEquals(6, $timesRun);
     }
 
     #[Test]

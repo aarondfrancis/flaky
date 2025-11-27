@@ -7,33 +7,31 @@
 namespace AaronFrancis\Flaky;
 
 use Illuminate\Support\Traits\Macroable;
+use Throwable;
 
 class Result
 {
     use Macroable;
 
-    public $value;
+    public readonly mixed $value;
 
-    public $failed = false;
+    public readonly bool $failed;
 
-    public $exception;
+    public readonly ?Throwable $exception;
 
-    public $succeeded;
+    public readonly bool $succeeded;
 
-    public function __construct($value, $exception)
+    public function __construct(mixed $value, ?Throwable $exception)
     {
         $this->value = $value;
-
-        $this->succeeded = is_null($exception);
-
-        $this->failed = !$this->succeeded;
-
         $this->exception = $exception;
+        $this->succeeded = $exception === null;
+        $this->failed = !$this->succeeded;
     }
 
-    public function throw()
+    public function throw(): static
     {
-        if ($this->exception) {
+        if ($this->exception !== null) {
             throw $this->exception;
         }
 
