@@ -7,9 +7,14 @@ third-parties.
 [![Total Downloads](https://img.shields.io/packagist/dt/aaronfrancis/flaky)](https://packagist.org/packages/aaronfrancis/flaky)
 [![License](https://img.shields.io/packagist/l/aaronfrancis/flaky)](https://packagist.org/packages/aaronfrancis/flaky)
 
+## Requirements
+
+- PHP 8.1+
+- Laravel 10, 11, or 12
+
 ## Installation
 
-You can install the package via Composer
+You can install the package via Composer:
 
 ```console
 composer require aaronfrancis/flaky
@@ -116,10 +121,28 @@ Flaky::make('my-flaky-code')
     })
 ```
 
-## Reporting instead of throwing
+## Filtering by Exception Type
 
-By default, Flaky will actually `throw` the exception if it occurs outside of the bounds you have define. You can choose
-to `report` that exception instead of throw it, using Laravel's `report` method.
+If you only want Flaky to handle certain types of exceptions, use `forExceptions()`. Any other exception types will be thrown immediately.
+
+```php
+Flaky::make('my-flaky-code')
+    ->allowFailuresForAnHour()
+    // Only handle TimeoutExceptions with flaky protection
+    ->forExceptions([TimeoutException::class])
+    ->run(function() {
+        // TimeoutException will be handled by Flaky
+        // Any other exception will be thrown immediately
+    })
+```
+
+## Handling Failures
+
+By default, Flaky will `throw` the exception when it occurs outside of your defined bounds. You have several options for customizing this behavior.
+
+### Reporting instead of throwing
+
+You can choose to `report` that exception instead of throwing it, using Laravel's `report` method.
 
 ```php
 Flaky::make('my-flaky-code')
@@ -131,8 +154,23 @@ Flaky::make('my-flaky-code')
     })
 ```
 
-This allows you to still get the alert, but carry on processing if you need to. (This is helpful for loops or
-long-running processes.)
+This allows you to still get the alert, but carry on processing if you need to. (This is helpful for loops or long-running processes.)
+
+### Custom Failure Handler
+
+For complete control over what happens when bounds are exceeded, use `handleFailures()`:
+
+```php
+Flaky::make('my-flaky-code')
+    ->allowFailuresForAnHour()
+    ->handleFailures(function($exception) {
+        // Log it, notify Slack, send an email, etc.
+        Log::error('Flaky operation failed', ['exception' => $exception]);
+    })
+    ->run(function() {
+        //
+    })
+```
 
 ## Retrying
 
@@ -204,8 +242,65 @@ $result->value; // 1
 $result->failed; // false
 $result->succeeded; // true
 $result->exception; // null. Would be populated if an exception was thrown.
-$result->throw(); // Throws an exception if present. Is a noop if not.
+$result->throw(); // Throws the exception if present, returns $this if not (for chaining).
 ```
+
+## Handling Exceptions Yourself
+
+If you're catching exceptions yourself and want to pass them to Flaky, use the `handle()` method:
+
+```php
+try {
+    $this->riskyOperation();
+} catch (Exception $e) {
+    // Let Flaky decide whether to throw or suppress
+    Flaky::make('my-flaky-code')
+        ->allowFailuresForAnHour()
+        ->handle($e);
+}
+```
+
+## Disabling Flaky Protection
+
+### Per-Instance
+
+You can disable Flaky protection for a specific instance:
+
+```php
+Flaky::make('my-flaky-code')
+    ->allowFailuresForAnHour()
+    ->disableFlakyProtection()
+    ->run(function() {
+        // Exceptions will be thrown immediately
+    });
+```
+
+### Local Environment Only
+
+To disable protection only in your local environment:
+
+```php
+Flaky::make('my-flaky-code')
+    ->allowFailuresForAnHour()
+    ->disableLocally() // Only disables when app()->environment('local')
+    ->run(function() {
+        //
+    });
+```
+
+### Globally
+
+To disable all Flaky protection across your application:
+
+```php
+// Disable all Flaky protection
+Flaky::globallyDisable();
+
+// Re-enable all Flaky protection
+Flaky::globallyEnable();
+```
+
+This is useful for testing or debugging when you want all exceptions to surface immediately.
 
 ## Flaky Commands
 
@@ -297,4 +392,4 @@ Flaky was developed by Aaron Francis. If you like it, please let me know!
 - Twitter: https://twitter.com/aarondfrancis
 - Website: https://aaronfrancis.com
 - YouTube: https://youtube.com/@aarondfrancis
-- GitHub: https://github.com/aarondfrancis/solo
+- GitHub: https://github.com/aaronfrancis/flaky
