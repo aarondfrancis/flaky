@@ -235,7 +235,7 @@ class Flaky
         return $this->protectionsBypassed() || !$this->exceptionIsFlaky($exception);
     }
 
-    protected function exceptionIsFlaky(?Throwable $exception = null): bool
+    protected function exceptionIsFlaky(Throwable $exception): bool
     {
         return $this->flakyExceptions === null || in_array($exception::class, $this->flakyExceptions, true);
     }
