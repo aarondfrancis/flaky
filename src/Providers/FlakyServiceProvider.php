@@ -14,11 +14,9 @@ use Illuminate\Support\ServiceProvider;
 
 class FlakyServiceProvider extends ServiceProvider
 {
-    public function register()
+    public function register(): void
     {
-        // $this->mergeConfigFrom(__DIR__ . '/../../config/flaky.php', 'flaky');
-
-        Event::listen(function (CommandStarting $event) {
+        Event::listen(function (CommandStarting $event): void {
             // When the schedule is starting we add an ENV variable. That
             // variable will get propagated down to all spawned commands
             // via the Symfony Process `getDefaultEnv` method.
@@ -28,12 +26,12 @@ class FlakyServiceProvider extends ServiceProvider
         });
     }
 
-    public function boot()
+    public function boot(): void
     {
         // A workaround for testing due to a change in Laravel 10.4.1
         // https://github.com/laravel/framework/pull/46508
         if ($this->app->runningUnitTests()) {
-            $this->app->booted(function () {
+            $this->app->booted(function (): void {
                 app(Kernel::class)->rerouteSymfonyCommandEvents();
             });
         }

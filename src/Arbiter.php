@@ -6,102 +6,106 @@
 
 namespace AaronFrancis\Flaky;
 
+use Illuminate\Contracts\Cache\Repository;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Traits\Macroable;
+use Throwable;
 
 class Arbiter
 {
     use Macroable;
 
-    public $failuresAllowedForSeconds = 60 * 60 * 24 * 365 * 10;
+    public int $failuresAllowedForSeconds = 60 * 60 * 24 * 365 * 10;
 
-    public $consecutiveFailuresAllowed = INF;
+    public int|float $consecutiveFailuresAllowed = INF;
 
-    public $totalFailuresAllowed = INF;
+    public int|float $totalFailuresAllowed = INF;
 
+    /** @var callable(Throwable): void */
     public $handleFailuresWith;
 
-    protected $key;
+    protected string $key;
 
-    protected $totalFailures;
+    protected int $totalFailures;
 
-    protected $consecutiveFailures;
+    protected int $consecutiveFailures;
 
-    protected $deadline;
+    protected ?int $deadline;
 
-    protected $cache;
+    protected Repository $cache;
 
-    public function __construct($id)
+    public function __construct(string $id)
     {
         $this->key = "flaky::$id";
         $this->cache = Cache::store();
 
+        /** @var array{total?: int, consecutive?: int, deadline?: int|null} $stats */
         $stats = $this->cache->get($this->key, []);
 
         $this->totalFailures = Arr::get($stats, 'total', 0);
         $this->consecutiveFailures = Arr::get($stats, 'consecutive', 0);
         $this->deadline = Arr::get($stats, 'deadline');
 
-        $this->handleFailuresWith = function ($e) {
+        $this->handleFailuresWith = function (Throwable $e): never {
             throw $e;
         };
     }
 
-    public function handle($exception)
+    public function handle(?Throwable $exception): void
     {
         $this->deadline = $this->deadline ?? $this->freshDeadline();
 
-        if ($exception) {
+        if ($exception !== null) {
             $this->totalFailures++;
             $this->consecutiveFailures++;
         }
 
         $this->updateCachedStats($exception);
 
-        if (!is_null($exception) && $this->outOfBounds()) {
+        if ($exception !== null && $this->outOfBounds()) {
             $this->callHandler($exception);
         }
     }
 
-    public function handleFailures($callback)
+    public function handleFailures(callable $callback): void
     {
         $this->handleFailuresWith = $callback;
     }
 
-    public function outOfBounds()
+    public function outOfBounds(): bool
     {
         return $this->tooManyConsecutiveFailures() || $this->tooManyTotalFailures() || $this->beyondDeadline();
     }
 
-    public function tooManyConsecutiveFailures()
+    public function tooManyConsecutiveFailures(): bool
     {
         return $this->consecutiveFailures > $this->consecutiveFailuresAllowed;
     }
 
-    public function tooManyTotalFailures()
+    public function tooManyTotalFailures(): bool
     {
         return $this->totalFailures > $this->totalFailuresAllowed;
     }
 
-    public function beyondDeadline()
+    public function beyondDeadline(): bool
     {
         return now()->timestamp > $this->deadline;
     }
 
-    protected function callHandler($exception)
+    protected function callHandler(Throwable $exception): void
     {
         call_user_func($this->handleFailuresWith, $exception);
     }
 
-    protected function freshDeadline()
+    protected function freshDeadline(): int
     {
         return now()->addSeconds($this->failuresAllowedForSeconds)->timestamp;
     }
 
-    protected function updateCachedStats($exception)
+    protected function updateCachedStats(?Throwable $exception): void
     {
-        $failed = !is_null($exception);
+        $failed = $exception !== null;
 
         $stats = $failed ? [
             // Reset if we passed, otherwise just store the incremented value.
